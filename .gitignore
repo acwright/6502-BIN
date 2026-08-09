@@ -1,0 +1,30 @@
+# Build artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Assembly output
+# *.list
+# *.lst
+*.map
+*.sym
+*.img
+
+# Backup and temporary files
+*~
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# IDE and editor files
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
