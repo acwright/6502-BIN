@@ -21,8 +21,11 @@ woz:
 
 cf:
 	cffs create $(TARGET).img --size 1M
-	cp -f $(TARGET).bin $(EIGHTTHREE).BIN || true
-	cffs add $(TARGET).img $(EIGHTTHREE).BIN
+	mkdir -p .cf
+	cp -f $(TARGET).bin .cf/$(EIGHTTHREE).BIN
+	cffs add $(TARGET).img .cf/$(EIGHTTHREE).BIN
+	rm -rf .cf
 
 clean:
-	rm -f $(TARGET).bin $(TARGET).woz $(TARGET).lst $(TARGET).img $(EIGHTTHREE).BIN
+	rm -rf .cf
+	rm -f $(TARGET).bin $(TARGET).woz $(TARGET).lst $(TARGET).img
