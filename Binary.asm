@@ -1,6 +1,12 @@
 .setcpu "65C02"
 
+; make VDP=1 builds for an ACE with a 6502-PICOVDP on BIOS 2.x;
+; the default builds for the TMS9918A on BIOS 1.x.
+.ifdef VDP
+.include "6502-VDP.inc"
+.else
 .include "6502.inc"
+.endif
 
 .segment "CODE"
 
@@ -23,13 +29,27 @@
 ;   $3A-$FF is yours, and so is all of $0800-$7FFF.
 ;
 ;   Launching:
-;     Monitor  G 0800     jumps here; nothing to return to (see Exit below)
-;     Monitor  J 0800     calls here; RTS returns to the Monitor
 ;     BASIC    SYS 2048   calls here; RTS returns to BASIC
 ;     Wozmon   0800R      jumps here; nothing to return to
+;     Monitor  G 0800     jumps here; nothing to return to (BIOS 1.x only)
+;     Monitor  J 0800     calls here; RTS returns to the Monitor (BIOS 1.x only)
 ; =============================================================================
 
 Start:
+.ifdef VDP
+  ; --- VDP build only: refuse to run on BIOS 1.x ---
+  ; A binary built with 6502-VDP.inc may call 2.x Kernal entries that are
+  ; bare RTS slots on 1.x, so it says so and returns instead.
+  jsr KernalVersion             ; A = major, X = minor
+  cmp #2
+  bcs @Bios2
+  lda #<NeedsBios2Msg
+  ldy #>NeedsBios2Msg
+  jsr PrintStr
+  rts                           ; Return to the caller (Monitor J / BASIC SYS)
+@Bios2:
+.endif
+
   ; === Your program starts here ===
 
   ; --- Optional: take the machine over completely ---
@@ -57,17 +77,18 @@ Start:
 ; =============================================================================
 ;   Exit
 ; =============================================================================
-;   RTS returns to whoever called you — the Monitor after J, BASIC after SYS.
+;   RTS returns to whoever called you — BASIC after SYS, the Monitor after J.
 ;   It is not valid after a G or a Wozmon R, which jump rather than call: there
 ;   is no return address on the stack.  A program launched that way should end
-;   in a loop, drop into the Monitor with BRK, or reboot through the RESET
-;   vector as shown below.
+;   in a loop, BRK, or reboot through the RESET vector as shown below.  On
+;   BIOS 1.x BRK enters the Monitor; on 2.x it prints the registers and
+;   returns to BASIC.
 ; =============================================================================
 
-  rts                           ; Return to the caller (Monitor J / BASIC SYS)
+  rts                           ; Return to the caller (BASIC SYS / Monitor J)
 
-  ; brk                         ; Alternative: break into the Monitor
-  ; jmp ($FFFC)                 ; Alternative: reboot to the boot menu
+  ; brk                         ; Alternative: the Monitor (1.x) or a BRK report and BASIC (2.x)
+  ; jmp ($FFFC)                 ; Alternative: reboot (the boot menu on 1.x, BASIC on 2.x)
 
 ; =============================================================================
 ;   Data
@@ -76,3 +97,8 @@ Start:
 HelloMsg:
   .byte "Hello from Binary!", CHAR_CR, CHAR_LF
   .byte "Press any key to exit.", CHAR_CR, CHAR_LF, $00
+
+.ifdef VDP
+NeedsBios2Msg:
+  .byte "NEEDS BIOS 2 AND A 6502-PICOVDP", CHAR_CR, CHAR_LF, $00
+.endif
