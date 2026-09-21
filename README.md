@@ -13,6 +13,13 @@ That makes this the template to reach for when BASIC is in the way rather than i
 
 The template builds two ways from the same source: `make` for any ACE on BIOS 1.x with a TMS9918A, and `make VDP=1` for an ACE converted to a [6502-PICOVDP](https://github.com/acwright/6502-PICOVDP) on BIOS 2.x. See [Building for the 6502-PICOVDP](#building-for-the-6502-picovdp). BIOS 2.x has no Monitor: the Monitor routes below are 1.x only.
 
+When the binary works, [6502-ASM](https://github.com/acwright/6502-ASM) is
+where a small one goes: demos, samples, scratchpads and tests, each in a
+directory of its own, and the KIM programs there are raw binaries of this shape.
+[6502-BAS](https://github.com/acwright/6502-BAS) and
+[6502-C](https://github.com/acwright/6502-C) are the same collection for BASIC
+and C. Anything bigger than a directory gets a repository of its own instead.
+
 ### How It Works
 
 1. The binary is loaded into RAM at `$0800` — from CompactFlash, over XMODEM, or pasted into Wozmon
@@ -247,8 +254,9 @@ This is the reason to pick this template over [6502-PRG](https://github.com/acwr
 - [6502-PICOVDP](https://github.com/acwright/6502-PICOVDP) — the video card `6502-VDP.inc` is for
 - [6502-EMULATOR](https://github.com/acwright/6502-EMULATOR) — run a binary without hardware (`make run`)
 - [6502-PRG](https://github.com/acwright/6502-PRG) — the same idea for programs launched from BASIC with `RUN`
-- [6502-CRT](https://github.com/acwright/6502-CRT) — the same idea for cartridge ROMs
-- [6502-ASM](https://github.com/acwright/6502-ASM) — worked assembly examples
+- [6502-CRT](https://github.com/acwright/6502-CRT) — the same idea for cartridge ROMs and banked Flash Carts
+- [6502-ASM](https://github.com/acwright/6502-ASM) — where small assembly programs live: demos, samples and tests, with worked examples of this template
+- [6502-BAS](https://github.com/acwright/6502-BAS) / [6502-C](https://github.com/acwright/6502-C) — the same collection for BASIC listings and for C
 - [6502-DOCS](https://github.com/acwright/6502-DOCS) — the documentation site: the cross-development and assembly guides, and the printable reference cards
 - [cffs](https://github.com/acwright/cffs) / [bin2woz](https://github.com/acwright/bin2woz) — the tools behind `make cf` and `make woz`
 
